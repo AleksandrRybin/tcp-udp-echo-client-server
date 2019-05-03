@@ -10,6 +10,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
-add_executable(server src/server.cpp)
+include_directories(inc)
+
+add_executable(server src/server.cpp src/digits.cpp)
 
 add_executable(client src/client.cpp)

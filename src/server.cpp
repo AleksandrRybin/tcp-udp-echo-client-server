@@ -7,6 +7,10 @@
 #include <iostream>
 #include <cstdlib>
 #include <string>
+#include <list>
+#include <algorithm>
+
+#include "digits.hpp"
 
 const size_t MAX_MSG = 64000;
 
@@ -99,7 +103,11 @@ int main(int argc, char* argv[]) {
                 sleep(3);
             }
             else {
-                std::cout << "Received: " << buf << num_bytes_read << std::endl;
+                std::cout << "Received by udp " << num_bytes_read << " bytes: " << buf << std::endl;
+
+                Digits digits = Digits::find_digits(buf, num_bytes_read);
+                digits.sort(false);
+                digits.print();
 
                 if (sendto(udp_socket, buf, num_bytes_read, 0, (sockaddr*) &udp_from_addr, len) < 0) {
                     std::cout << "Error sending to udp socket" << errno << std::endl;
@@ -129,7 +137,11 @@ int main(int argc, char* argv[]) {
                     sleep(3);
                 }
                 else {
-                    std::cout << "Received: " << buf << num_bytes_read << std::endl;
+                    std::cout << "Received by tcp " << num_bytes_read << " bytes: " << buf << std::endl;
+
+                    Digits digits = Digits::find_digits(buf, num_bytes_read);
+                    digits.sort(false);
+                    digits.print();
 
                     if (send(tcp_client, buf, num_bytes_read, 0) < 0) {
                         std::cout << "Error sending to tcp socket" << std::endl;
