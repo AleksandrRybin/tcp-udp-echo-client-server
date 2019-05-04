@@ -65,12 +65,6 @@ TCPSocket::TCPSocket(int port, bool is_listening, const char* ip)
     }
 }
 
-TCPSocket::~TCPSocket() {
-    if (client) {
-        close(client);
-    }
-}
-
 bool TCPSocket::accept() {
     client = accept4(sock, NULL, NULL, SOCK_NONBLOCK);
 
@@ -92,7 +86,6 @@ int TCPSocket::read() {
         }
     
         if (num_bytes_read == 0) {
-            close(client);
             client = 0;
         }
     }

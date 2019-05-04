@@ -38,7 +38,6 @@ class TCPSocket : public INETSocket {
 public:
     
     TCPSocket(int port, bool is_listening, const char* ip="127.0.0.1");
-    ~TCPSocket();
     
     virtual int read() override;
     virtual int transmit(const char* msg, int len) override;
