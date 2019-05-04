@@ -25,7 +25,7 @@ void Numbers::operator()(std::csub_match match) {
 }
 
 Numbers Numbers::find_numbers(const char* str, int len) {
-    std::regex number("[+-]?[1-9]\\d*");
+    std::regex number("[+-]?\\d+");
     std::cregex_token_iterator it(str, str + len, number);
     std::cregex_token_iterator it_end;
 
@@ -45,7 +45,7 @@ void Numbers::print() {
     if (size()) {
         std::for_each(numbers.begin(), numbers.end(), [](const int& number){std::cout << number << " ";});
         std::cout << std::endl 
-        << "quantity: " << size() << "sum: " << sum << " max: " << max << " min: " << min 
+        << "quantity: " << size() << " sum: " << sum << " max: " << max << " min: " << min 
         << std::endl;
     }
     else {
