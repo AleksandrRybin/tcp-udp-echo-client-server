@@ -10,7 +10,7 @@
 
 #define MAX_MSG 64000
 #define EXIT_MSG "server power off"
-#define MAX_TCP_CLIENTS 5
+#define MAX_TCP_CLIENTS 10
 
 class INETSocket {
 
@@ -45,7 +45,8 @@ public:
 private:
     bool accept();
 
-    int client = 0;
+    int clients[MAX_TCP_CLIENTS] = {0};
+    int curr_client = 0;
 };
 
 class UDPSocket : public INETSocket {

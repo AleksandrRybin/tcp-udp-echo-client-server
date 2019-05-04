@@ -66,27 +66,57 @@ TCPSocket::TCPSocket(int port, bool is_listening, const char* ip)
 }
 
 bool TCPSocket::accept() {
-    client = accept4(sock, NULL, NULL, SOCK_NONBLOCK);
+    int new_client = accept4(sock, NULL, NULL, SOCK_NONBLOCK);
 
-    return client > 0;
+    if (new_client < 0 && 
+    (errno == EWOULDBLOCK || errno == EAGAIN)) {
+        curr_client++;
+        return false;
+    }
+
+    if (curr_client < MAX_TCP_CLIENTS) {
+        clients[curr_client] = new_client;
+
+        return clients[curr_client] > 0;
+    }
+    else {
+        curr_client = 0;
+        return clients[curr_client] > 0;
+    }
 }
 
 int TCPSocket::read() {
     int num_bytes_read;
 
     if (is_listening) {
-        if (client > 0) {
-            num_bytes_read = recv(client, buf, MAX_MSG, 0);
-        }
-        else if (accept()) {
-            num_bytes_read = recv(client, buf, MAX_MSG, 0);
+        if (curr_client < MAX_TCP_CLIENTS) {
+            if (clients[curr_client] > 0) {
+                num_bytes_read = recv(clients[curr_client], buf, MAX_MSG, 0);
+
+                if (num_bytes_read < 0 && 
+                (errno == EWOULDBLOCK || errno == EAGAIN)) {
+                    curr_client++;
+                }
+            }
+            else if (accept()) {
+                num_bytes_read = recv(clients[curr_client], buf, MAX_MSG, 0);
+
+                if (num_bytes_read < 0 && 
+                (errno == EWOULDBLOCK || errno == EAGAIN)) {
+                    curr_client++;
+                }
+            }
+            else {
+                num_bytes_read = -1;
+            }
+        
+            if (num_bytes_read == 0) {
+                clients[curr_client] = 0;
+            }
         }
         else {
+            curr_client = 0;
             num_bytes_read = -1;
-        }
-    
-        if (num_bytes_read == 0) {
-            client = 0;
         }
     }
     else {
@@ -102,7 +132,7 @@ int TCPSocket::read() {
 
 int TCPSocket::transmit(const char* msg, int len) {
     if (is_listening) {
-        return send(client, msg, len, 0);
+        return send(clients[curr_client], msg, len, 0);
     }
     else {
         return send(sock, msg, len, 0);
