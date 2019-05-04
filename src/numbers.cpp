@@ -43,7 +43,14 @@ void Numbers::sort(bool asc) {
 
 void Numbers::print() {
     if (size()) {
-        std::for_each(numbers.begin(), numbers.end(), [](const int& number){std::cout << number << " ";});
+        std::cout << "Numbers: ";
+
+        std::for_each(
+            numbers.begin(), 
+            numbers.end(), 
+            [](const int& number){std::cout << number << " ";}
+        );
+        
         std::cout << std::endl 
         << "quantity: " << size() << " sum: " << sum << " max: " << max << " min: " << min 
         << std::endl;
