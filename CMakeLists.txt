@@ -6,12 +6,20 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CXX_STANDARD_REQUIRED on)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 include_directories(inc)
 
-add_executable(server src/server.cpp src/digits.cpp)
+add_library(sockets STATIC src/sockets.cpp)
+
+add_library(numbers STATIC src/numbers.cpp)
+
+add_executable(server src/server.cpp)
 
 add_executable(client src/client.cpp)
+
+target_link_libraries(server sockets numbers)
+
+target_link_libraries(client sockets)
