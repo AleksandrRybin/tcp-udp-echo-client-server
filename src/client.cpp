@@ -6,7 +6,7 @@
 
 #include "sockets.hpp"
 
-#define CLIENT_EXIT "quit"
+#define CLIENT_EXIT "quit" // message to finish client program
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
@@ -55,6 +55,7 @@ int main(int argc, char* argv[]) {
         std::cout << "input message:" << std::endl;
         std::getline(std::cin, msg);
 
+        // check if get CLIENT_EXIT message
         if (msg == CLIENT_EXIT) {
             std::cout << "bye!" << std::endl;
             break;
@@ -67,6 +68,7 @@ int main(int argc, char* argv[]) {
         if (num_bytes_read > 0) {
             std::cout << "from server: " << socket->get_buf() << std::endl;
 
+            // check if get EXIT_MSG message
             if (strcmp(socket->get_buf(), EXIT_MSG) == 0) {
                 std::cout << "bye!" << std::endl;
                 break;

@@ -34,32 +34,40 @@ int main(int argc, char* argv[]) {
     }
 
     while(true) {
+
+        // try read from tcp
         int num_bytes_read = tcp_socket->read();
 
         if (num_bytes_read > 0){
             std::cout << "Received by tcp "
             << num_bytes_read << " bytes: " << tcp_socket->get_buf() << std::endl;
 
+            // search numbers [0-9]
             Numbers numbers = Numbers::find_numbers(tcp_socket->get_buf(), num_bytes_read);
             numbers.sort(false);
             numbers.print();
 
+            // echo to client
             tcp_socket->transmit(tcp_socket->get_buf(), num_bytes_read);
         }
 
+        // after tcp try read from udp
         num_bytes_read = udp_socket->read();
 
         if (num_bytes_read > 0) {
             std::cout << "Received by udp " 
             << num_bytes_read << " bytes: " << udp_socket->get_buf() << std::endl;
 
+            // search numbers [0-9]
             Numbers numbers = Numbers::find_numbers(udp_socket->get_buf(), num_bytes_read);
             numbers.sort(false);
             numbers.print();
 
+            // echo to client
             udp_socket->transmit(udp_socket->get_buf(), num_bytes_read);
         }
 
+        // check if get EXIT_MSG message
         if (strcmp(EXIT_MSG, tcp_socket->get_buf()) == 0 ||
             strcmp(EXIT_MSG, udp_socket->get_buf()) == 0) {
             std::cout << "bye!" << std::endl;

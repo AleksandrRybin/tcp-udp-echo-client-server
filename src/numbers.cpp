@@ -25,10 +25,13 @@ void Numbers::operator()(std::csub_match match) {
 }
 
 Numbers Numbers::find_numbers(const char* str, int len) {
-    std::regex number("[+-]?\\d+");
+    std::regex number("[+-]?\\d+"); // regexpr for any numbers with sign or not
+
+    // regex search along str
     std::cregex_token_iterator it(str, str + len, number);
     std::cregex_token_iterator it_end;
 
+    // check all mathes
     return std::for_each(it, it_end, Numbers());
 }
 
@@ -45,6 +48,7 @@ void Numbers::print() {
     if (size()) {
         std::cout << "Numbers: ";
 
+        // print all numbers in list
         std::for_each(
             numbers.begin(), 
             numbers.end(), 

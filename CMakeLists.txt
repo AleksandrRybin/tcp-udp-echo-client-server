@@ -16,8 +16,10 @@ add_library(sockets STATIC src/sockets.cpp)
 
 add_library(numbers STATIC src/numbers.cpp)
 
+# server program
 add_executable(server src/server.cpp)
 
+# client program
 add_executable(client src/client.cpp)
 
 target_link_libraries(server sockets numbers)

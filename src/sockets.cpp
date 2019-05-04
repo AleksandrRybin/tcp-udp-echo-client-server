@@ -66,8 +66,12 @@ TCPSocket::TCPSocket(int port, bool is_listening, const char* ip)
 }
 
 bool TCPSocket::accept() {
+
+    // try accept new connection
     int new_client = accept4(sock, NULL, NULL, SOCK_NONBLOCK);
 
+    // if there isn't new connection
+    // try to serve next client
     if (new_client < 0 && 
     (errno == EWOULDBLOCK || errno == EAGAIN)) {
         curr_client++;
@@ -80,6 +84,8 @@ bool TCPSocket::accept() {
         return clients[curr_client] > 0;
     }
     else {
+        // if index out of range
+        // start from begin
         curr_client = 0;
         return clients[curr_client] > 0;
     }
@@ -89,40 +95,55 @@ int TCPSocket::read() {
     int num_bytes_read;
 
     if (is_listening) {
+
+        // if socket in listening mode
         if (curr_client < MAX_TCP_CLIENTS) {
             if (clients[curr_client] > 0) {
                 num_bytes_read = recv(clients[curr_client], buf, MAX_MSG, 0);
 
+                // if nothing to read
+                // try to serve next client
                 if (num_bytes_read < 0 && 
                 (errno == EWOULDBLOCK || errno == EAGAIN)) {
                     curr_client++;
                 }
             }
             else if (accept()) {
+                // try accept new connection
                 num_bytes_read = recv(clients[curr_client], buf, MAX_MSG, 0);
 
+                // if nothing to read
+                // try to serve next client
                 if (num_bytes_read < 0 && 
                 (errno == EWOULDBLOCK || errno == EAGAIN)) {
                     curr_client++;
                 }
             }
             else {
+                // couldn't read
+                // and accept anything
                 num_bytes_read = -1;
             }
         
             if (num_bytes_read == 0) {
+                // current client finished
                 clients[curr_client] = 0;
             }
         }
         else {
+            // if index out of range
+            // start from begin
             curr_client = 0;
             num_bytes_read = -1;
         }
     }
     else {
+        // if not in listening mode
+        // just read from socket
         num_bytes_read = recv(sock, buf, MAX_MSG, 0);
     }
 
+    // mark current end of str
     if (num_bytes_read > 0 && num_bytes_read < MAX_MSG) {
         buf[num_bytes_read] = '\0';
     }
@@ -176,6 +197,7 @@ int UDPSocket::read() {
         num_bytes_read = recvfrom(sock, buf, MAX_MSG, 0, NULL, NULL);
     }
 
+    // mark current end of str
     if (num_bytes_read > 0 && num_bytes_read < MAX_MSG) {
         buf[num_bytes_read] = '\0';
     }
