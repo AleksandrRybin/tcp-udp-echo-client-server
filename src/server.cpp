@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
             std::cout << "Received by udp " 
             << num_bytes_read << " bytes: " << udp_socket->get_buf() << std::endl;
 
-            Numbers numbers = Numbers::find_numbers(tcp_socket->get_buf(), num_bytes_read);
+            Numbers numbers = Numbers::find_numbers(udp_socket->get_buf(), num_bytes_read);
             numbers.sort(false);
             numbers.print();
 
